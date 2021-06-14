@@ -1,11 +1,11 @@
-const createThemeColorReplacerPlugin = require("./src/utils/plugin.config.js");
+const createThemeColorReplacerPlugin = require("./src/utils/plugin.config");
 module.exports = {
   lintOnSave: false,
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
         appId: "", //appid
-        productName: "", //软件名称
+        productName: "优享音乐", //软件名称
         win: {
           icon: "",
         },
@@ -54,6 +54,7 @@ module.exports = {
           // DO NOT REMOVE THIS LINE
           javascriptEnabled: true,
         },
+        additionalData: `@import "@/styles/theme/index.less";`,
       },
     },
   },

@@ -1,0 +1,80 @@
+.home {
+  .header {
+    background: @primary-color;
+    color: @white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .header-left {
+      display: flex;
+      align-items: center;
+      .logo {
+        display: flex;
+        align-items: center;
+        img {
+          width: 84px;
+          height: 22.5px;
+        }
+      }
+      .search {
+        margin-left: 50px;
+        .search-inp {
+          /deep/input {
+            border-radius: 12px;
+          }
+        }
+      }
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      .user {
+        cursor: pointer;
+        .user-name {
+          margin: 0 8px;
+          color: @normal-color;
+          &:hover {
+            color: @white;
+          }
+        }
+      }
+      .control {
+        font-size: 16px;
+        i {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}
+/deep/.login-dialog {
+  width: 435px !important;
+  .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .page-tit {
+      margin: 30px auto;
+      text-align: center;
+      font-size: 24px;
+    }
+    .inp {
+      margin: 0 auto;
+      border-radius: 24px;
+      width: 240px;
+      margin-bottom: 15px;
+      input {
+        border-radius: 24px;
+      }
+    }
+    .btn {
+      width: 240px;
+      margin: 18px auto 0;
+    }
+    .agree-service {
+      font-size: 12px;
+      margin: 20px auto;
+    }
+  }
+}

@@ -7,6 +7,7 @@ import "normalize.css";
 import utils from "./utils/util";
 //注意antd样式的引入必须由css改为less引入
 import "./styles/theme/index.less";
+import "./common/axios";
 
 Vue.use(Antd);
 Vue.prototype.$u = utils;
