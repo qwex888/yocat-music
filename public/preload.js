@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 window.fs = fs;
 window.path = path;
-
+global.electron = require("electron");
 const { Notification } = require("electron");
 
 // 断网提示

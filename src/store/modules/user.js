@@ -28,6 +28,9 @@ const actions = {
       }
     }
   },
+  logOut() {
+    commit("setUserInfo", { account: {}, profile: {}, token: "" });
+  },
 };
 
 export default { state, mutations, actions };

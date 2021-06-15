@@ -1,6 +1,9 @@
 "use strict";
 const electron = require("electron");
 const path = require("path");
+// 引用缓存
+const Store = require("electron-store");
+const store = new Store();
 
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import {
@@ -31,6 +34,7 @@ function createWindow() {
     minWidth: 800,
     center: true,
     frame: true,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
       // 通过preload让渲染进程拥有使用node模块的能力
@@ -65,44 +69,82 @@ let trayMenuTemplate = [
 ];
 function setTray() {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
-  //  ，通常被添加到一个 context menu 上.
+  //  ，通常被添加到一个 context menu 上
+  console.log("最小化");
+  const Menu = electron.Menu;
+  const Tray = electron.Tray;
+  // 系统托盘右键菜单
+  let trayMenuTemplate = [
+    {
+      // 系统托盘图标目录
+      label: "退出",
+      click: function() {
+        app.quit();
+      },
+    },
+  ];
+  // 当前目录下的app.ico图标
+  let appTray = new Tray(
+    path.join(app.getAppPath(), "./assets/images/logo.png")
+  );
+  // 图标的上下文菜单
+  const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
+  // 隐藏主窗口
+  win.hide();
+  // 设置托盘悬浮提示
+  appTray.setToolTip("优享音乐");
+  // 设置托盘菜单
+  appTray.setContextMenu(contextMenu);
+  // 单击托盘小图标显示应用
+  appTray.on("click", function() {
+    // 显示主程序
+    win.show();
+    // 关闭托盘显示
+    appTray.destroy();
+  });
 }
-
+let isMaximize = false;
 //窗口操作
 ipcMain.on("control", function(event, type) {
-  if (type === "minimize") {
+  if (type === "isRemember") {
+    if (store.get("userConfig.closeConfirm.remember")) {
+      event.reply("close-onfirm", store.get("userConfig.closeConfirm.value"));
+    } else {
+      event.reply("close-onfirm", "open");
+    }
+  } else if (type === "hide") {
+    // 最小化
     console.log("最小化");
-    const Menu = electron.Menu;
-    const Tray = electron.Tray;
-    // 系统托盘右键菜单
-    let trayMenuTemplate = [
-      {
-        // 系统托盘图标目录
-        label: "退出",
-        click: function() {
-          app.quit();
-        },
-      },
-    ];
-    // 当前目录下的app.ico图标
-    let appTray = new Tray(
-      path.join(app.getAppPath(), "./assets/images/logo.png")
-    );
-    // 图标的上下文菜单
-    const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
-    // 隐藏主窗口
-    win.hide();
-    // 设置托盘悬浮提示
-    appTray.setToolTip("优享音乐");
-    // 设置托盘菜单
-    appTray.setContextMenu(contextMenu);
-    // 单击托盘小图标显示应用
-    appTray.on("click", function() {
-      // 显示主程序
-      win.show();
-      // 关闭托盘显示
-      appTray.destroy();
-    });
+    win.minimize();
+  } else if (type === "mize") {
+    // 全屏/默认
+    if (win.isMaximized()) {
+      console.log("默认");
+      win.unmaximize();
+    } else {
+      console.log("全屏");
+      win.maximize();
+    }
+  } else if (type === "reside") {
+    // 最小化到托盘
+    console.log("最小化到托盘");
+    setTray();
+  } else if (type === "close") {
+    // 关闭
+    console.log("关闭");
+    win.close();
+  } else if (type === "chcheReside") {
+    // 记住最小化到托盘
+    store.set("userConfig.closeConfirm.remember", true);
+    store.set("userConfig.closeConfirm.value", "reside");
+    console.log("最小化到托盘");
+    setTray();
+  } else if (type === "chcheClose") {
+    // 关闭
+    store.set("userConfig.closeConfirm.remember", true);
+    store.set("userConfig.closeConfirm.value", "close");
+    console.log("关闭");
+    win.close();
   }
 });
 
