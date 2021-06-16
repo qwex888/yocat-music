@@ -37,13 +37,13 @@ export default {
   props: {
     visible: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
       value: 2,
-      remember: false
+      remember: false,
     };
   },
   methods: {
@@ -52,13 +52,15 @@ export default {
       this.$emit("close");
     },
     submit() {
-      // setStore("userConfig.closeConfirm.remember", this.remember);
-      // setStore("userConfig.closeConfirm.value", this.value);
-      console.log(this.remember, this.value);
       let ipcRenderer = window.electron.ipcRenderer;
-      ipcRenderer.send("control", this.remember ? "cache-" + value : value);
-    }
-  }
+      if (ipcRenderer) {
+        ipcRenderer.send(
+          "control",
+          this.remember ? "chche-" + this.value : this.value
+        );
+      }
+    },
+  },
 };
 </script>
 

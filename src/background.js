@@ -4,10 +4,10 @@ const path = require("path");
 // 引用缓存
 const Store = require("electron-store");
 const store = new Store();
-
+let appTray = null;
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import {
-  createProtocol
+  createProtocol,
   // installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -22,7 +22,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
+  { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
 function createWindow() {
@@ -34,12 +34,13 @@ function createWindow() {
     minWidth: 800,
     center: true,
     frame: true,
-    skipTaskbar: true,
+    skipTaskbar: false,
     webPreferences: {
+      contextIsolation: false,
       nodeIntegration: true,
       // 通过preload让渲染进程拥有使用node模块的能力
-      preload: path.join(app.getAppPath(), "../public/preload.js")
-    }
+      preload: path.join(app.getAppPath(), "../public/preload.js"),
+    },
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -64,13 +65,12 @@ let trayMenuTemplate = [
     label: "退出",
     click: function() {
       app.quit();
-    }
-  }
+    },
+  },
 ];
 function setTray() {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   //  ，通常被添加到一个 context menu 上
-  console.log("最小化");
   const Menu = electron.Menu;
   const Tray = electron.Tray;
   // 系统托盘右键菜单
@@ -80,13 +80,12 @@ function setTray() {
       label: "退出",
       click: function() {
         app.quit();
-      }
-    }
+      },
+    },
   ];
   // 当前目录下的app.ico图标
-  let appTray = new Tray(
-    path.join(app.getAppPath(), "./assets/images/logo.png")
-  );
+  let iconPath = path.join(__dirname, "../public/favicon.ico");
+  appTray = new Tray(iconPath);
   // 图标的上下文菜单
   const contextMenu = Menu.buildFromTemplate(trayMenuTemplate);
   // 隐藏主窗口
@@ -114,36 +113,29 @@ ipcMain.on("control", function(event, type) {
     }
   } else if (type === "hide") {
     // 最小化
-    console.log("最小化");
     win.minimize();
   } else if (type === "mize") {
     // 全屏/默认
     if (win.isMaximized()) {
-      console.log("默认");
       win.unmaximize();
     } else {
-      console.log("全屏");
       win.maximize();
     }
   } else if (type === "reside") {
     // 最小化到托盘
-    console.log("最小化到托盘");
     setTray();
   } else if (type === "close") {
     // 关闭
-    console.log("关闭");
     win.close();
   } else if (type === "chche-reside") {
     // 记住最小化到托盘
     store.set("userConfig.closeConfirm.remember", true);
     store.set("userConfig.closeConfirm.value", "reside");
-    console.log("最小化到托盘");
     setTray();
   } else if (type === "chche-close") {
     // 关闭
     store.set("userConfig.closeConfirm.remember", true);
     store.set("userConfig.closeConfirm.value", "close");
-    console.log("关闭");
     win.close();
   }
 });
@@ -190,18 +182,18 @@ app.on("ready", async () => {
 });
 
 autoUpdater.on("checking-for-update", () => {});
-autoUpdater.on("update-available", info => {
+autoUpdater.on("update-available", (info) => {
   console.log(info);
   dialog.showMessageBox({
     title: "新版本发布",
     message: "有新内容更新，稍后将重新为您安装",
     buttons: ["确定"],
     type: "info",
-    noLink: true
+    noLink: true,
   });
 });
 
-autoUpdater.on("update-downloaded", info => {
+autoUpdater.on("update-downloaded", (info) => {
   console.log(info);
   autoUpdater.quitAndInstall();
 });
@@ -209,7 +201,7 @@ autoUpdater.on("update-downloaded", info => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {
-    process.on("message", data => {
+    process.on("message", (data) => {
       if (data === "graceful-exit") {
         app.quit();
       }
