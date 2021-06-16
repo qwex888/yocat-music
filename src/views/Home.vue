@@ -18,7 +18,7 @@
       <div class="header-right">
         <div v-if="userToken" class="user">
           <a-dropdown :trigger="['click']">
-            <a class="ant-dropdown-link" @click="(e) => e.preventDefault()">
+            <a class="ant-dropdown-link" @click="e => e.preventDefault()">
               <y-avatar :src="userProfile.avatarUrl || ''"></y-avatar>
               <span class="user-name">{{ userProfile.nickname || "" }}</span>
               <a-icon type="caret-down" />
@@ -70,21 +70,30 @@ export default {
   components: {
     YAvatar,
     LoginDialog,
-    CloseDialog,
+    CloseDialog
   },
   data() {
     return {
       visibleLogin: false,
       visibleClose: false,
       isMaximize: false,
-      ipcRenderer: null,
+      ipcRenderer: null
     };
   },
   computed: {
-    ...mapState("user", ["userToken", "userProfile"]),
+    ...mapState("user", ["userToken", "userProfile"])
   },
   mounted() {
     this.ipcRenderer = window.electron.ipcRenderer;
+    this.ipcRenderer.on("close-onfirm", function(event, arg) {
+      console.log(arg); // prints "pong"
+      if (arg === "open") {
+        console.log("打开弹窗");
+        this.visibleClose = true;
+      } else {
+        this.ipcRenderer.send("control", arg);
+      }
+    });
   },
   methods: {
     ...mapActions("user", ["login"]),
@@ -99,12 +108,13 @@ export default {
     },
     closeMain() {
       // 向主进程发出询问,通过通信返回是否打开弹窗
+      this.ipcRenderer.send("control", "isRemember");
     },
     goLogin() {
       this.visibleLogin = true;
     },
-    logOut() {},
-  },
+    logOut() {}
+  }
 };
 </script>
 

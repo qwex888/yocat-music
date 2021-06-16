@@ -7,7 +7,7 @@ const store = new Store();
 
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import {
-  createProtocol,
+  createProtocol
   // installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -22,7 +22,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
 
 function createWindow() {
@@ -38,8 +38,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       // 通过preload让渲染进程拥有使用node模块的能力
-      preload: path.join(app.getAppPath(), "../public/preload.js"),
-    },
+      preload: path.join(app.getAppPath(), "../public/preload.js")
+    }
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -64,8 +64,8 @@ let trayMenuTemplate = [
     label: "退出",
     click: function() {
       app.quit();
-    },
-  },
+    }
+  }
 ];
 function setTray() {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
@@ -80,8 +80,8 @@ function setTray() {
       label: "退出",
       click: function() {
         app.quit();
-      },
-    },
+      }
+    }
   ];
   // 当前目录下的app.ico图标
   let appTray = new Tray(
@@ -133,13 +133,13 @@ ipcMain.on("control", function(event, type) {
     // 关闭
     console.log("关闭");
     win.close();
-  } else if (type === "chcheReside") {
+  } else if (type === "chche-reside") {
     // 记住最小化到托盘
     store.set("userConfig.closeConfirm.remember", true);
     store.set("userConfig.closeConfirm.value", "reside");
     console.log("最小化到托盘");
     setTray();
-  } else if (type === "chcheClose") {
+  } else if (type === "chche-close") {
     // 关闭
     store.set("userConfig.closeConfirm.remember", true);
     store.set("userConfig.closeConfirm.value", "close");
@@ -190,18 +190,18 @@ app.on("ready", async () => {
 });
 
 autoUpdater.on("checking-for-update", () => {});
-autoUpdater.on("update-available", (info) => {
+autoUpdater.on("update-available", info => {
   console.log(info);
   dialog.showMessageBox({
     title: "新版本发布",
     message: "有新内容更新，稍后将重新为您安装",
     buttons: ["确定"],
     type: "info",
-    noLink: true,
+    noLink: true
   });
 });
 
-autoUpdater.on("update-downloaded", (info) => {
+autoUpdater.on("update-downloaded", info => {
   console.log(info);
   autoUpdater.quitAndInstall();
 });
@@ -209,7 +209,7 @@ autoUpdater.on("update-downloaded", (info) => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {
-    process.on("message", (data) => {
+    process.on("message", data => {
       if (data === "graceful-exit") {
         app.quit();
       }
