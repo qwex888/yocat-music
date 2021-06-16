@@ -5,15 +5,6 @@
         <div class="logo">
           <img src="@/assets/images/logo.png" alt="" />
         </div>
-        <div class="search">
-          <a-input-search
-            size="small"
-            placeholder="搜索"
-            class="search-inp"
-            style="width: 200px"
-            @search="onSearch"
-          />
-        </div>
       </div>
       <div class="header-right">
         <div v-if="userToken" class="user">
@@ -46,16 +37,6 @@
         </div>
       </div>
     </div>
-    <!-- 登陆弹出 -->
-    <login-dialog
-      :visible="visibleLogin"
-      @close="visibleLogin = false"
-    ></login-dialog>
-    <!-- 退出弹窗 -->
-    <close-dialog
-      :visible="visibleClose"
-      @close="visibleClose = false"
-    ></close-dialog>
   </div>
 </template>
 
@@ -66,7 +47,7 @@ import YAvatar from "@/components/y-avatar";
 import LoginDialog from "@/components/login-dialog";
 import CloseDialog from "@/components/close-dialog";
 export default {
-  name: "home",
+  name: "Song",
   components: {
     YAvatar,
     LoginDialog,

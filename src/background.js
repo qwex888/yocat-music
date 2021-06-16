@@ -32,8 +32,8 @@ function createWindow() {
     height: 800,
     minHeight: 600,
     minWidth: 800,
-    center: true,
-    frame: true,
+    center: true, // 屏幕中央
+    frame: false, // 显示外框
     skipTaskbar: false,
     webPreferences: {
       contextIsolation: false,
