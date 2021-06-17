@@ -1,11 +1,12 @@
 "use strict";
 const electron = require("electron");
 const path = require("path");
+
 // 引用缓存
 const Store = require("electron-store");
 const store = new Store();
 let appTray = null;
-import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import { app, protocol, BrowserWindow, ipcMain, dialog } from "electron";
 import {
   createProtocol
   // installVueDevtools
@@ -19,6 +20,14 @@ const globalShortcut = electron.globalShortcut;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+
+// 弹窗
+const Notification = electron.Notification;
+let notification;
+
+function showNotification(title, body) {
+  notification({ title: title, body: body }).show();
+}
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -57,17 +66,31 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
+  notification = new Notification();
 }
 
-//系统托盘图标目录
-let trayMenuTemplate = [
-  {
-    label: "退出",
-    click: function() {
-      app.quit();
+// 检测并强制关闭
+function setClose() {
+  win.close();
+  setTimeout(() => {
+    if (!win.isDestroyed()) {
+      dialog
+        .showMessageBox({
+          // type:'info',
+          title: "提示",
+          message: "监测到进程无响应，是否强制关闭",
+          buttons: ["确定", "取消"]
+        })
+        .then(result => {
+          if (result.response === 0) {
+            win.destroy();
+          }
+        });
     }
-  }
-];
+  }, 2000);
+}
+
+// 设置托盘
 function setTray() {
   // 用一个 Tray 来表示一个图标,这个图标处于正在运行的系统的通知区
   //  ，通常被添加到一个 context menu 上
@@ -107,6 +130,7 @@ function setTray() {
 let isMaximize = false;
 //窗口操作
 ipcMain.on("control", function(event, type) {
+  console.log(type);
   if (type === "isRemember") {
     if (store.get("userConfig.closeConfirm.remember")) {
       event.reply("close-onfirm", store.get("userConfig.closeConfirm.value"));
@@ -128,7 +152,8 @@ ipcMain.on("control", function(event, type) {
     setTray();
   } else if (type === "close") {
     // 关闭
-    win.close();
+    console.log("关闭");
+    setClose();
   } else if (type === "chche-reside") {
     // 记住最小化到托盘
     store.set("userConfig.closeConfirm.remember", true);
@@ -138,7 +163,7 @@ ipcMain.on("control", function(event, type) {
     // 关闭
     store.set("userConfig.closeConfirm.remember", true);
     store.set("userConfig.closeConfirm.value", "close");
-    win.close();
+    setClose();
   }
 });
 

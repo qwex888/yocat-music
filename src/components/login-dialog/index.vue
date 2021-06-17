@@ -3,6 +3,7 @@
     dialogClass="login-dialog"
     :visible="visible"
     :footer="null"
+    :maskClosable="false"
     @cancel="cancelDiolog"
   >
     <div v-if="formData.type === 1" class="form">

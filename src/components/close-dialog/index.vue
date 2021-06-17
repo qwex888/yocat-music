@@ -55,6 +55,7 @@ export default {
     submit() {
       let ipcRenderer = window.electron.ipcRenderer;
       if (ipcRenderer) {
+        console.log(this.value);
         ipcRenderer.send(
           "control",
           this.remember ? "chche-" + this.value : this.value

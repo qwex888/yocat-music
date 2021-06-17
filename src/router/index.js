@@ -10,11 +10,24 @@ const routes = [
     path: "/",
     name: "home",
     component: Home,
+    redirect: "/meet",
     children: [
       {
         path: "meet",
         name: "meet",
         component: Meet
+      },
+      {
+        path: "local",
+        name: "local",
+        component: () =>
+          import(/* webpackChunkName: "Local" */ "@/pages/Local/Local.vue")
+      },
+      {
+        path: "recent",
+        name: "recent",
+        component: () =>
+          import(/* webpackChunkName: "Recent" */ "@/pages/Recent/Recent.vue")
       }
     ]
   }

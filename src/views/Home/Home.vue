@@ -69,7 +69,9 @@
         </div>
       </div>
       <div class="body">
-        <router-view></router-view>
+        <transition name="fade">
+          <router-view></router-view>
+        </transition>
       </div>
     </div>
     <!-- 登陆弹出 -->
@@ -167,6 +169,7 @@ export default {
     },
     chagneItem(item) {
       this.defaultActiveItem = item.key;
+      this.$router.push({ name: item.key });
     },
     goLogin() {
       this.visibleLogin = true;
@@ -177,5 +180,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
 @import "./index.less";
 </style>
