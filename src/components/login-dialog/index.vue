@@ -6,8 +6,8 @@
     :maskClosable="false"
     @cancel="cancelDiolog"
   >
+    <h3 class="page-tit">{{ pageTit }}</h3>
     <div v-if="formData.type === 1" class="form">
-      <h3 class="page-tit">{{ pageTit }}</h3>
       <a-input
         class="inp"
         v-model="formData.phone"
@@ -29,16 +29,29 @@
         >登录</a-button
       >
 
-      <a-button type="link" @click="changLogin">
-        换其他方式登录>>
+      <a-button style="margin-top: 10px" type="link" @click="changLogin(2)">
+        切换其他方式登录>>
       </a-button>
 
       <a-checkbox class="agree-service" @change="onChangeService">
         同意
-        <a-button style="padding:0" type="link" @click="goService">
+        <a-button style="padding: 0" type="link" @click="goService">
           《隐私条款》以及《用户协议》
         </a-button>
       </a-checkbox>
+    </div>
+    <div v-else class="qrcode">
+      <div class="qrimg">
+        <img :src="qrimg" />
+        <div v-if="qroverdue" class="qrmock">
+          <a-button type="link">
+            <a-icon type="reload" />
+            <br />
+            二维码已失效<br />点击重新生成
+          </a-button>
+        </div>
+      </div>
+      <a-button type="link" @click="changLogin(1)"> 切换至密码登录>> </a-button>
     </div>
   </a-modal>
 </template>
@@ -62,7 +75,9 @@ export default {
       },
       loginLoading: false,
       autoLogin: false,
-      serviceLogin: false
+      serviceLogin: false,
+      qrimg: null,
+      qroverdue: false // false 不显示过期蒙层
     };
   },
   computed: {
@@ -82,8 +97,11 @@ export default {
       // 通知关闭
       this.$emit("close");
     },
-    changLogin() {
-      this.formData.type = 2;
+    changLogin(type) {
+      this.formData.type = type;
+      if (type === 2 && !this.qroverdue) {
+        // 请求二维码
+      }
     },
     async submitLogin() {
       if (!this.serviceLogin)
@@ -115,15 +133,23 @@ export default {
 <style lang="less" scoped>
 /deep/.login-dialog {
   width: 435px !important;
+  height: 430px;
+  .ant-modal-body,
+  .ant-modal-content {
+    height: 100%;
+  }
+  .page-tit {
+    padding: 20px auto;
+    text-align: center;
+    font-size: 29px;
+    letter-spacing: 2px;
+  }
   .form {
+    margin-top: 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    .page-tit {
-      margin: 30px auto;
-      text-align: center;
-      font-size: 24px;
-    }
+
     .inp {
       margin: 0 auto;
       border-radius: 24px;
@@ -140,6 +166,38 @@ export default {
     .agree-service {
       font-size: 12px;
       margin: 20px auto;
+    }
+  }
+  .qrcode {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 25px;
+    .qrimg {
+      display: block;
+      width: 180px;
+      height: 180px;
+      margin-bottom: 32px;
+      position: relative;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .qrmock {
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.2);
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      button {
+        margin-top: 40px;
+        line-height: 28px;
+      }
     }
   }
 }
