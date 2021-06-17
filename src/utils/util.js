@@ -21,6 +21,19 @@ function changeColor(newColor) {
   return client.changer.changeColor(options, Promise);
 }
 
+export const setPlaybackAmount = (count) => {
+  const num = String(count);
+  if (num.length > 8) {
+    return num.slice(0, -8) + " 亿";
+  } else if (num.length > 4) {
+    return num.slice(0, -4) + " 万";
+  } else if (num.length > 3) {
+    return num.slice(0, -3) + " 千";
+  } else {
+    return num;
+  }
+};
+
 export default {
   updateTheme(newPrimaryColor) {
     const hideMessage = () => console.log("正在切换主题！", 0);

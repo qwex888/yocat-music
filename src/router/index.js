@@ -15,26 +15,34 @@ const routes = [
       {
         path: "meet",
         name: "meet",
-        component: Meet
+        component: Meet,
       },
       {
         path: "local",
         name: "local",
         component: () =>
-          import(/* webpackChunkName: "Local" */ "@/pages/Local/Local.vue")
+          import(/* webpackChunkName: "Local" */ "@/pages/Local/Local.vue"),
       },
       {
         path: "recent",
         name: "recent",
         component: () =>
-          import(/* webpackChunkName: "Recent" */ "@/pages/Recent/Recent.vue")
-      }
-    ]
-  }
+          import(/* webpackChunkName: "Recent" */ "@/pages/Recent/Recent.vue"),
+      },
+      {
+        path: "order-detail",
+        name: "order-detail",
+        component: () =>
+          import(
+            /* webpackChunkName: "OrderDetail" */ "@/pages/OrderDetail/OrderDetail.vue"
+          ),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

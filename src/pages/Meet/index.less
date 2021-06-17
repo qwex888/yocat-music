@@ -1,0 +1,64 @@
+.meet {
+  padding: 15px;
+  overflow: auto;
+  height: 100%;
+  .scrollbar;
+  .song-group {
+    margin-bottom: 30px;
+    .title {
+      padding: 20px 0;
+      font-size: 22px;
+      font-weight: 600;
+      cursor: pointer;
+      &:hover {
+        color: fade(@black, 65%);
+      }
+    }
+    .song-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .song-item {
+      width: 140px;
+      height: 200px;
+      margin: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .song-cover {
+      position: relative;
+      img {
+        border-radius: 4px;
+        width: 138px;
+        height: 138px;
+        transition: all 0.5s;
+        cursor: pointer;
+        &:hover {
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+      }
+      span {
+        position: absolute;
+        right: 8px;
+        top: 4px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+    .song-title {
+      width: 100%;
+      display: block;
+      height: 42px;
+      cursor: pointer;
+      display: block;
+      margin-top: 12px;
+      transition: all 0.5s;
+      .two-text;
+      text-align: left;
+      &:hover {
+        color: fade(@black, 45%);
+      }
+    }
+  }
+}

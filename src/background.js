@@ -8,7 +8,7 @@ const store = new Store();
 let appTray = null;
 import { app, protocol, BrowserWindow, ipcMain, dialog } from "electron";
 import {
-  createProtocol
+  createProtocol,
   // installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
@@ -31,7 +31,7 @@ function showNotification(title, body) {
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
+  { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
 function createWindow() {
@@ -48,8 +48,8 @@ function createWindow() {
       contextIsolation: false,
       nodeIntegration: true,
       // 通过preload让渲染进程拥有使用node模块的能力
-      preload: path.join(app.getAppPath(), "../public/preload.js")
-    }
+      preload: path.join(app.getAppPath(), "../public/preload.js"),
+    },
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -79,9 +79,9 @@ function setClose() {
           // type:'info',
           title: "提示",
           message: "监测到进程无响应，是否强制关闭",
-          buttons: ["确定", "取消"]
+          buttons: ["确定", "取消"],
         })
-        .then(result => {
+        .then((result) => {
           if (result.response === 0) {
             win.destroy();
           }
@@ -102,9 +102,10 @@ function setTray() {
       // 系统托盘图标目录
       label: "退出",
       click: function() {
-        app.quit();
-      }
-    }
+        // app.quit(); // 温和派可能退出失败
+        app.exit(); // 强硬派，强制退出
+      },
+    },
   ];
   // 当前目录下的app.ico图标
   let iconPath = path.join(__dirname, "../public/favicon.ico");
@@ -209,18 +210,18 @@ app.on("ready", async () => {
 });
 
 autoUpdater.on("checking-for-update", () => {});
-autoUpdater.on("update-available", info => {
+autoUpdater.on("update-available", (info) => {
   console.log(info);
   dialog.showMessageBox({
     title: "新版本发布",
     message: "有新内容更新，稍后将重新为您安装",
     buttons: ["确定"],
     type: "info",
-    noLink: true
+    noLink: true,
   });
 });
 
-autoUpdater.on("update-downloaded", info => {
+autoUpdater.on("update-downloaded", (info) => {
   console.log(info);
   autoUpdater.quitAndInstall();
 });
@@ -228,7 +229,7 @@ autoUpdater.on("update-downloaded", info => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === "win32") {
-    process.on("message", data => {
+    process.on("message", (data) => {
       if (data === "graceful-exit") {
         app.quit();
       }
