@@ -3,6 +3,7 @@
     dialogClass="login-dialog"
     :visible="visible"
     :footer="null"
+    :maskClosable="false"
     @cancel="cancelDiolog"
   >
     <p>请确认最小化面板或退出</p>
@@ -37,13 +38,13 @@ export default {
   props: {
     visible: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
-      value: 2,
-      remember: false,
+      value: "reside",
+      remember: false
     };
   },
   methods: {
@@ -58,9 +59,10 @@ export default {
           "control",
           this.remember ? "chche-" + this.value : this.value
         );
+        this.cancelDiolog();
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

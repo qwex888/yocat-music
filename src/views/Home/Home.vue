@@ -18,7 +18,7 @@
       <div class="header-right">
         <div v-if="userToken" class="user">
           <a-dropdown :trigger="['click']">
-            <a class="ant-dropdown-link" @click="(e) => e.preventDefault()">
+            <a class="ant-dropdown-link" @click="e => e.preventDefault()">
               <y-avatar :src="userProfile.avatarUrl || ''"></y-avatar>
               <span class="user-name">{{ userProfile.nickname || "" }}</span>
               <a-icon type="caret-down" />
@@ -59,7 +59,7 @@
             :key="sub"
             :class="[
               'side-item',
-              defaultActiveItem === ite.key ? 'active-item' : '',
+              defaultActiveItem === ite.key ? 'active-item' : ''
             ]"
             @click="chagneItem(ite)"
           >
@@ -67,6 +67,9 @@
             <span class="item-tit">{{ ite.title }}</span>
           </div>
         </div>
+      </div>
+      <div class="body">
+        <router-view></router-view>
       </div>
     </div>
     <!-- 登陆弹出 -->
@@ -93,7 +96,7 @@ export default {
   components: {
     YAvatar,
     LoginDialog,
-    CloseDialog,
+    CloseDialog
   },
   data() {
     return {
@@ -109,9 +112,9 @@ export default {
             {
               title: "遇见音乐",
               key: "meet",
-              icon: "",
-            },
-          ],
+              icon: ""
+            }
+          ]
         },
         user: {
           title: "我的音乐",
@@ -119,20 +122,20 @@ export default {
             {
               title: "本地音乐",
               key: "local",
-              icon: "icon-yinfu01",
+              icon: "icon-yinfu01"
             },
             {
               title: "最近播放",
               key: "recent",
-              icon: "icon-suishenting",
-            },
-          ],
-        },
-      },
+              icon: "icon-suishenting"
+            }
+          ]
+        }
+      }
     };
   },
   computed: {
-    ...mapState("user", ["userToken", "userProfile"]),
+    ...mapState("user", ["userToken", "userProfile"])
   },
   mounted() {
     if (window.electron) {
@@ -142,6 +145,7 @@ export default {
           this.visibleClose = true;
         } else {
           this.ipcRenderer.send("control", arg);
+          this.visibleClose = false;
         }
       });
     }
@@ -167,8 +171,8 @@ export default {
     goLogin() {
       this.visibleLogin = true;
     },
-    logOut() {},
-  },
+    logOut() {}
+  }
 };
 </script>
 

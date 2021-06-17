@@ -43,30 +43,31 @@
 </template>
 
 <script>
+import { isMobile } from "@/utils/validate";
 export default {
   name: "login-dialog",
   props: {
     visible: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
       formData: {
         phone: "",
         password: "",
-        type: 1,
+        type: 1
       },
       loginLoading: false,
       autoLogin: false,
-      serviceLogin: false,
+      serviceLogin: false
     };
   },
   computed: {
     pageTit() {
       return this.formData.type === 1 ? "手机登录" : "扫码登录";
-    },
+    }
   },
   methods: {
     cancelDiolog() {
@@ -75,7 +76,7 @@ export default {
       this.formData = {
         phone: "",
         password: "",
-        type: 1,
+        type: 1
       };
       // 通知关闭
       this.$emit("close");
@@ -91,8 +92,11 @@ export default {
       if (!isMobile(this.formData.phone))
         return this.$message.warning("手机格式不正确");
       this.loginLoading = true;
-      await this.login(this.formData);
-      this.cancelDiolog();
+      const successLogin = await this.login({
+        ...this.formData,
+        password: this.$md5(this.formData.password)
+      });
+      successLogin ? this.cancelDiolog() : (this.loginLoading = false);
     },
     // 自动登录
     onChangeAutoLogin(e) {
@@ -102,8 +106,8 @@ export default {
     onChangeService(e) {
       this.serviceLogin = e.target.checked;
     },
-    goService() {},
-  },
+    goService() {}
+  }
 };
 </script>
 

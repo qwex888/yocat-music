@@ -1,11 +1,12 @@
 <template>
-  <div class="song"></div>
+  <div class="meet"></div>
 </template>
 
 <script>
 import { mapMutations, mapState, mapActions } from "vuex";
+
 export default {
-  name: "Song",
+  name: "Meet",
   components: {},
   data() {
     return {};
