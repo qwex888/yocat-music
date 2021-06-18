@@ -14,7 +14,11 @@ axiosInstance.interceptors.request.use(
   config => {
     if (config.method === "post") {
       // 如果有cache的key为true接口加上时间戳
-      if (config.data.hasOwnProperty("cache") && config.data.cache === true) {
+      if (
+        config.data &&
+        config.data.hasOwnProperty("cache") &&
+        config.data.cache === true
+      ) {
         config.url = config.url + "?timestamp=" + new Date().getTime();
       }
     }

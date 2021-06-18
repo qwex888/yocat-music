@@ -105,7 +105,6 @@ export default {
       visibleLogin: false,
       visibleClose: false,
       isMaximize: false,
-      ipcRenderer: null,
       defaultActiveItem: "meet",
       sideList: {
         default: {
@@ -140,13 +139,12 @@ export default {
     ...mapState("user", ["userToken", "userProfile"])
   },
   mounted() {
-    if (window.electron) {
-      this.ipcRenderer = window.electron.ipcRenderer;
-      this.ipcRenderer.on("close-onfirm", (event, arg) => {
+    if (this.$ipc) {
+      this.$ipc.on("close-onfirm", (event, arg) => {
         if (arg === "open") {
           this.visibleClose = true;
         } else {
-          this.ipcRenderer.send("control", arg);
+          this.$ipc.send("control", arg);
           this.visibleClose = false;
         }
       });
@@ -154,6 +152,7 @@ export default {
   },
   methods: {
     ...mapActions("user", ["login"]),
+    ...mapMutations(["setElectronStore"]),
     changeTheme(primaryColor) {
       this.$u.updateTheme(primaryColor);
     },
@@ -161,18 +160,22 @@ export default {
       console.log(value, "search");
     },
     ipcSend(type) {
-      this.ipcRenderer.send("control", type);
+      this.$ipc.send("control", type);
     },
     closeMain() {
       // 向主进程发出询问,通过通信返回是否打开弹窗
-      this.ipcRenderer.send("control", "isRemember");
+      this.$ipc.send("control", "isRemember");
     },
     chagneItem(item) {
       this.defaultActiveItem = item.key;
       this.$router.push({ name: item.key });
     },
     goLogin() {
-      this.visibleLogin = true;
+      this.$ipc.send("electron-store-set", {
+        key: "account",
+        value: { phone: 15516167302, password: "mm2395695" }
+      });
+      // this.visibleLogin = true;
     },
     logOut() {}
   }

@@ -11,6 +11,11 @@ import "./styles/theme/index.less";
 import "./common/axios";
 import md5 from "js-md5";
 
+Vue.prototype.$ipc = window.electron.ipcRenderer;
+// 初始化接受ipc传来的缓存数据,并存入store中
+Vue.prototype.$ipc.on("electron-store-get", (event, arg) => {
+  store.commit("setElectronStore", arg);
+});
 Vue.use(Antd);
 Vue.prototype.$u = utils;
 Vue.prototype.$md5 = md5;

@@ -5,10 +5,10 @@ Vue.use(Vuex);
 const files = require.context("./modules", false, /\.js$/);
 const modules = {};
 
-files.keys().forEach((key) => {
+files.keys().forEach(key => {
   modules[key.replace(/(\.\/|\.js)/g, "")] = files(key).default;
 });
-Object.keys(modules).forEach((key) => {
+Object.keys(modules).forEach(key => {
   modules[key]["namespaced"] = true;
 });
 const store = new Vuex.Store({
@@ -17,16 +17,21 @@ const store = new Vuex.Store({
     globalMsgShow: false,
     globalMsg: {
       type: "",
-      msg: "",
+      msg: ""
     },
+    electronStore: {}
   },
+  actions: {},
   mutations: {
-    setGlobalMsgShow({ state }, data) {
+    setElectronStore(state, data) {
+      state.electronStore = { ...state.electronStore, ...data };
+    },
+    setGlobalMsgShow(state, data) {
       state.globalMsgShow = data;
     },
-    setGlobalMsg({ state }, data) {
+    setGlobalMsg(state, data) {
       state.globalMsg = data;
-    },
-  },
+    }
+  }
 });
 export default store;
