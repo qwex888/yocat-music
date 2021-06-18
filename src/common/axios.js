@@ -36,7 +36,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   response => {
     // const { code } = response.data;
-    if (response.status === 200) {
+    if (response.status === 200 || response.code === 200) {
       return response.data;
     } else if (response.status === 301) {
       Message.error("需要登录");

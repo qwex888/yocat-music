@@ -1,11 +1,18 @@
 import Vue from "vue";
-import { phoneLogin, logout } from "@/apis/user";
+import {
+  phoneLogin,
+  logout,
+  loginQrKey,
+  loginQrCreate,
+  loginQrCheck
+} from "@/apis/user";
 import Message from "ant-design-vue/lib/message";
 const state = {
   userToken: "",
   userAccount: {},
   userProfile: {},
-  userCookie: ""
+  userCookie: "",
+  loginKey: ""
 };
 const mutations = {
   setUserInfo(state, data) {
@@ -13,6 +20,9 @@ const mutations = {
     state.userAccount = data.account;
     state.userProfile = data.profile;
     state.userCookie = data.cookie;
+  },
+  setLoginKey(state, data) {
+    state.loginKey = data;
   }
 };
 const actions = {
@@ -27,6 +37,12 @@ const actions = {
         Message.error(res.msg || res.message);
         return false;
       }
+    }
+  },
+  async qrLogin({ commit }) {
+    const key = await loginQrKey();
+    if (!key) {
+      commit("setLoginKey", key);
     }
   },
   async logOut() {
