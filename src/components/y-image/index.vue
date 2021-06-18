@@ -1,5 +1,11 @@
 <template>
-  <img v-if="!isErr" :src="src" :alt="alt" @error="error" />
+  <img
+    v-if="!isErr"
+    :src="src"
+    :alt="alt"
+    @error="error"
+    @click="$emit('click')"
+  />
   <div v-else class="placeholder"><a-icon type="picture" /></div>
 </template>
 <script>
@@ -8,29 +14,30 @@ export default {
   props: {
     src: {
       type: String,
-      default: ""
+      default: "",
     },
     alt: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data() {
     return {
-      isErr: false
+      isErr: false,
     };
   },
   methods: {
     error() {
       this.isErr = true;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
 img {
   width: inherit;
   height: inherit;
+  // -webkit-user-drag: none;
 }
 .placeholder {
   width: 100%;

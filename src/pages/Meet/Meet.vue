@@ -13,10 +13,11 @@
                 :src="ite.picUrl"
                 @click="getDetail(ite)"
               ></y-image>
-              <span
+              <span class="play-count"
                 ><i class="iconfont icon-bofang"></i>
                 {{ setPlaybackAmount(ite.playCount) }}</span
               >
+              <div class="play"><a-icon type="play-circle" /></div>
             </div>
             <span class="song-title" @click="getDetail(ite)">{{
               ite.name
@@ -43,17 +44,17 @@ export default {
       lsitMap: {
         personalized: {
           title: "推荐歌单",
-          list: []
+          list: [],
         },
         highquality: {
           title: "精品歌单",
-          list: []
-        }
-      }
+          list: [],
+        },
+      },
     };
   },
   computed: {
-    ...mapState("user", ["userToken", "userProfile"])
+    ...mapState("user", ["userToken", "userProfile"]),
   },
   created() {
     this.getData();
@@ -72,7 +73,7 @@ export default {
       const res = await highquality();
       const { code, playlists } = res;
       if (code === 200) {
-        this.lsitMap.highquality.list = playlists.map(item => {
+        this.lsitMap.highquality.list = playlists.map((item) => {
           return { ...item, picUrl: item.coverImgUrl + "?param=200y200" };
         });
       }
@@ -82,7 +83,7 @@ export default {
       const res = await personalized();
       const { code, result } = res;
       if (code === 200) {
-        this.lsitMap.personalized.list = result.map(item => {
+        this.lsitMap.personalized.list = result.map((item) => {
           return { ...item, picUrl: item.picUrl + "?param=200y200" };
         });
       }
@@ -93,8 +94,8 @@ export default {
     },
     getDetail(item) {
       console.log(item.id);
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -21,6 +21,7 @@ function changeColor(newColor) {
   return client.changer.changeColor(options, Promise);
 }
 
+// 换算播放量
 export const setPlaybackAmount = (count) => {
   const num = String(count);
   if (num.length > 8) {
@@ -32,6 +33,22 @@ export const setPlaybackAmount = (count) => {
   } else {
     return num;
   }
+};
+
+// 换算播放时间
+export const durationTrans = (a) => {
+  var b = "";
+  var h = parseInt(a / 3600),
+    m = parseInt((a % 3600) / 60),
+    s = parseInt((a % 3600) % 60);
+  if (h > 0) {
+    h = h < 10 ? "0" + h : h;
+    b += h + ":";
+  }
+  m = m < 10 ? "0" + m : m;
+  s = s < 10 ? "0" + s : s;
+  b += m + ":" + s;
+  return b;
 };
 
 export default {

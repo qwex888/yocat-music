@@ -1,0 +1,53 @@
+.header {
+  background: @primary-color;
+  color: @white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  -webkit-app-region: drag; // 允许拖拽
+  -webkit-user-select: none;
+  .header-left {
+    display: flex;
+    align-items: center;
+    .logo {
+      display: flex;
+      align-items: center;
+      img {
+        width: 84px;
+        height: 22.5px;
+      }
+    }
+    .search {
+      margin-left: 50px;
+      .search-inp {
+        -webkit-app-region: no-drag; // 禁止拖拽
+        /deep/input {
+          border-radius: 12px;
+        }
+      }
+    }
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    .user {
+      -webkit-app-region: no-drag;
+      cursor: pointer;
+      .user-name {
+        margin: 0 8px;
+        color: #fafafa;
+        &:hover {
+          color: @white;
+        }
+      }
+    }
+    .control {
+      -webkit-app-region: no-drag;
+      font-size: 16px;
+      i {
+        margin-left: 14px;
+      }
+    }
+  }
+}
