@@ -1,8 +1,8 @@
 <template>
   <div class="footer">
     <div class="song-info">
-      <div class="song-cover">
-        <img src="@/assets/images/logo.png" />
+      <div :class="['song-cover', songCoverAnimate]" @click="openSongDetail">
+        <!-- <img src="@/assets/images/logo.png" /> -->
       </div>
       <div class="song-msg">
         <a-tooltip>
@@ -43,11 +43,18 @@
     </div>
     <div class="song-set">
       <!-- 播放方式 -->
+      <i class="iconfont icon-xunhuanbofang"></i>
       <!-- 音量调节 -->
       <div class="volume">
-        <i class="iconfont icon-yinliang"></i>
+        <i :class="['iconfont', volumeIcon]" @click="handleVolume"></i>
+        <a-slider
+          v-model="initVolume"
+          :default-value="volume"
+          @change="volumeChange"
+        />
       </div>
       <!-- 播放列表 -->
+      <i class="iconfont icon-gedan"></i>
     </div>
   </div>
 </template>
@@ -62,18 +69,51 @@ export default {
     return {
       songStartTime: 0,
       songEndTime: 0,
+      isMute: false,
+      initVolume: 50,
+      songCoverAnimate: "shadow-drop-2-lr",
     };
   },
   computed: {
-    ...mapState(["currentSong", "playList", "playStatus"]),
+    ...mapState(["volume", "currentSong", "electronStore", "playStatus"]),
+    volumeIcon() {
+      return this.volume === 0
+        ? "icon-guanbishengyin"
+        : this.volume === 100
+        ? "icon-zuidayinliang"
+        : "icon-yinliang";
+    },
+  },
+  created() {
+    this.initVolume = this.volume;
   },
   methods: {
     durationTrans,
     ...mapActions(["changeSong"]),
-    ...mapMutations(["setPlayStatus"]),
+    ...mapMutations(["setPlayStatus", "setVolume"]),
     // 滚动条切换
     progressChange(value) {
       console.log(value);
+    },
+    volumeChange(value) {
+      this.setVolume(value);
+      this.initVolume = value;
+    },
+    handleVolume() {
+      if (this.isMute) {
+        this.setVolume(50);
+        this.initVolume = 50;
+      } else {
+        this.setVolume(0);
+        this.initVolume = 0;
+      }
+      this.isMute = !this.isMute;
+    },
+    openSongDetail() {
+      this.songCoverAnimate = "";
+      setTimeout(() => {
+        this.songCoverAnimate = "shadow-drop-2-lr";
+      }, 200);
     },
   },
 };

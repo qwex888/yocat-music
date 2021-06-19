@@ -19,10 +19,14 @@ const store = new Vuex.Store({
       type: "",
       msg: "",
     },
-    electronStore: {},
+    electronStore: {
+      playList: [],
+    },
     currentSong: {},
     playStatus: false, // false暂停
-    playList: [],
+    volume: localStorage.getItem("volume")
+      ? Number(localStorage.getItem("volume"))
+      : 50,
   },
   actions: {
     changeSong({ commit }, direction) {
@@ -30,6 +34,10 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    setVolume(state, value) {
+      state.volume = value;
+      localStorage.setItem("volume", value);
+    },
     setPlayStatus(state) {
       state.playStatus = !state.playStatus;
     },
