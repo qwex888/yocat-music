@@ -1,7 +1,8 @@
 <template>
+  <!-- :src="src" -->
   <img
     v-if="!isErr"
-    :src="src"
+    v-lazy="src"
     :alt="alt"
     @error="error"
     @click="$emit('click')"

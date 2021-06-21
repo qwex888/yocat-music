@@ -20,9 +20,14 @@ const store = new Vuex.Store({
       msg: "",
     },
     electronStore: {
-      playList: [],
+      playlist: {},
     },
-    currentSong: {},
+    currentSong:
+      localStorage.getItem("currentSong") &&
+      localStorage.getItem("currentSong") != undefined
+        ? JSON.parse(localStorage.getItem("currentSong"))
+        : {},
+    currentPlaylistIndex: 0,
     playStatus: false, // false暂停
     volume: localStorage.getItem("volume")
       ? Number(localStorage.getItem("volume"))
@@ -34,6 +39,17 @@ const store = new Vuex.Store({
     },
   },
   mutations: {
+    setCurrentSong(state, { value, isEmpty }) {
+      console.log(value, isEmpty, "setCurrentSong");
+      if (value) {
+        if (!isEmpty) {
+          state.currentSong = { ...state.currentSong, ...value };
+        } else {
+          state.currentSong = value;
+        }
+        localStorage.setItem("currentSong", JSON.stringify(state.currentSong));
+      }
+    },
     setVolume(state, value) {
       state.volume = value;
       localStorage.setItem("volume", value);
@@ -41,8 +57,12 @@ const store = new Vuex.Store({
     setPlayStatus(state) {
       state.playStatus = !state.playStatus;
     },
+    setCurrentPlaylistIndex(state, index) {
+      state.currentPlaylistIndex = index;
+    },
     setElectronStore(state, data) {
       state.electronStore = { ...state.electronStore, ...data };
+      console.log(state.electronStore, "state.electronStore");
     },
     setGlobalMsgShow(state, data) {
       state.globalMsgShow = data;

@@ -37,7 +37,7 @@ protocol.registerSchemesAsPrivileged([
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({
-    width: 1200,
+    width: 1350,
     height: 800,
     minHeight: 650,
     minWidth: 1100,
@@ -62,7 +62,7 @@ function createWindow() {
     win.loadURL("app://./index.html");
     autoUpdater.checkForUpdates();
   }
-
+  win.moveTop();
   win.on("closed", () => {
     win = null;
   });
@@ -144,6 +144,7 @@ let isMaximize = false;
 // 缓存信息专用
 ipcMain.on("electron-store-set", (event, type) => {
   // 设置保存tpye类型key,value
+  console.log(type);
   store.set("store." + type.key, type.value);
 });
 

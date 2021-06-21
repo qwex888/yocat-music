@@ -2,20 +2,24 @@
   <div class="footer">
     <div class="song-info">
       <div :class="['song-cover', songCoverAnimate]" @click="openSongDetail">
-        <!-- <img src="@/assets/images/logo.png" /> -->
+        <img
+          :src="currentSong && currentSong.al ? currentSong.al.picUrl : ''"
+        />
       </div>
       <div class="song-msg">
         <a-tooltip>
           <template slot="title">
-            prompt text
+            {{ currentSong && currentSong.name ? currentSong.name : "" }}
           </template>
-          <span class="song-title">ALKSjdl asjdoiqe sdjkwej</span>
+          <span class="song-title">{{
+            currentSong && currentSong.name ? currentSong.name : ""
+          }}</span>
         </a-tooltip>
         <a-tooltip>
           <template slot="title">
-            prompt text
+            {{ currentSong | returnSinger }}
           </template>
-          <span class="song-singer">aosdja-dqwdojeeqpwoje</span>
+          <span class="song-singer">{{ currentSong | returnSinger }}</span>
         </a-tooltip>
       </div>
     </div>
@@ -56,12 +60,19 @@
       <!-- 播放列表 -->
       <i class="iconfont icon-gedan"></i>
     </div>
+    <!-- 音乐标签 -->
+    <audio
+      ref="audioRef"
+      :src="currentSong && currentSong.url ? currentSong.url : ''"
+    ></audio>
   </div>
 </template>
 
 <script>
+import { getSongUrl } from "@/apis/audio";
 import { mapMutations, mapState, mapActions } from "vuex";
 import { durationTrans } from "@/utils/util";
+import { returnSinger } from "@/utils/filter";
 export default {
   name: "SongBar",
   props: {},
@@ -75,7 +86,18 @@ export default {
     };
   },
   computed: {
-    ...mapState(["volume", "currentSong", "electronStore", "playStatus"]),
+    ...mapState([
+      "volume",
+      "currentSong",
+      "electronStore",
+      "playStatus",
+      "currentPlaylistIndex",
+    ]),
+    playlist() {
+      console.log(this.electronStore.playlist, "computed:playList");
+      return this.electronStore.playlist;
+    },
+
     volumeIcon() {
       return this.volume === 0
         ? "icon-guanbishengyin"
@@ -84,13 +106,40 @@ export default {
         : "icon-yinliang";
     },
   },
+  watch: {
+    "playlist.id": {
+      handler(val) {
+        console.log(val, "watch,切换播放事件?");
+        // 切换播放事件？
+        this.setCurrentPlaylistIndex(0);
+        console.log(this.playlist, "playlist:watch,切换播放事件");
+        this.setCurrentSong({
+          value: this.playlist.tracks[this.currentPlaylistIndex],
+          isEmpty: true,
+        });
+      },
+      deep: false,
+    },
+    currentSong: {
+      handlercurrentSong(val) {
+        console.log(val, "watch,当前播放");
+        if (val.id) this.getSongUrl(val.id);
+      },
+      deep: false,
+    },
+  },
   created() {
     this.initVolume = this.volume;
   },
   methods: {
     durationTrans,
     ...mapActions(["changeSong"]),
-    ...mapMutations(["setPlayStatus", "setVolume"]),
+    ...mapMutations([
+      "setPlayStatus",
+      "setCurrentPlaylistIndex",
+      "setVolume",
+      "setCurrentSong",
+    ]),
     // 滚动条切换
     progressChange(value) {
       console.log(value);
@@ -115,6 +164,25 @@ export default {
         this.songCoverAnimate = "shadow-drop-2-lr";
       }, 200);
     },
+    getSongUrl(id) {
+      getSongUrl(id)
+        .then((res) => {
+          const { code, data } = res;
+          if (code === 200 && data[0].code === 200) {
+            this.setCurrentSong({ value: data[0], isEmpty: false });
+          } else {
+            Message.error(
+              [404, 403].includes(data.code)
+                ? "找不到该歌曲或未登录"
+                : "获取异常"
+            );
+          }
+        })
+        .catch((err) => {});
+    },
+  },
+  filters: {
+    returnSinger,
   },
 };
 </script>
