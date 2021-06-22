@@ -32,7 +32,7 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from "vuex";
-import { personalized, highquality } from "@/apis/songOrder";
+import { personalized, highquality, playlistDetail } from "@/apis/songOrder";
 import { setPlaybackAmount } from "@/utils/util";
 import YImage from "@/components/y-image/";
 export default {
@@ -44,17 +44,18 @@ export default {
       lsitMap: {
         personalized: {
           title: "推荐歌单",
-          list: [],
+          list: []
         },
         highquality: {
           title: "精品歌单",
-          list: [],
-        },
-      },
+          list: []
+        }
+      }
     };
   },
   computed: {
     ...mapState("user", ["userToken", "userProfile"]),
+    ...mapState(["currentPlaylistIndex"])
   },
   created() {
     this.getData();
@@ -62,6 +63,7 @@ export default {
   mounted() {},
   methods: {
     ...mapActions("user", ["login"]),
+    ...mapMutations(["setElectronStore", "setCurrentSong"]),
     setPlaybackAmount,
     async getData() {
       this.pageLoading = true;
@@ -73,7 +75,7 @@ export default {
       const res = await highquality();
       const { code, playlists } = res;
       if (code === 200) {
-        this.lsitMap.highquality.list = playlists.map((item) => {
+        this.lsitMap.highquality.list = playlists.map(item => {
           return { ...item, picUrl: item.coverImgUrl + "?param=200y200" };
         });
       }
@@ -83,7 +85,7 @@ export default {
       const res = await personalized();
       const { code, result } = res;
       if (code === 200) {
-        this.lsitMap.personalized.list = result.map((item) => {
+        this.lsitMap.personalized.list = result.map(item => {
           return { ...item, picUrl: item.picUrl + "?param=200y200" };
         });
       }
@@ -93,9 +95,25 @@ export default {
       console.log(item);
     },
     getDetail(item) {
-      console.log(item.id);
-    },
-  },
+      playlistDetail(item.id)
+        .then(res => {
+          const { code, playlist } = res;
+          if (code === 200) {
+            this.$ipc.send("electron-store-set", {
+              key: "playlist",
+              value: playlist
+            });
+            this.setElectronStore({ playlist });
+            // 取出里面歌曲的id和赋值当前音乐信息到组件，并记录当前播放下标
+            this.setCurrentSong({
+              value: playlist.tracks[this.currentPlaylistIndex],
+              isEmpty: true
+            });
+          }
+        })
+        .catch(err => {});
+    }
+  }
 };
 </script>
 

@@ -1,7 +1,8 @@
 <template>
+  <!-- :src="src" -->
   <img
     v-if="!isErr"
-    :src="src"
+    v-lazy="src"
     :alt="alt"
     @error="error"
     @click="$emit('click')"
@@ -14,23 +15,23 @@ export default {
   props: {
     src: {
       type: String,
-      default: "",
+      default: ""
     },
     alt: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   data() {
     return {
-      isErr: false,
+      isErr: false
     };
   },
   methods: {
     error() {
       this.isErr = true;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
