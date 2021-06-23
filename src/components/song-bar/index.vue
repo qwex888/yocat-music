@@ -3,7 +3,7 @@
     <div class="song-info">
       <div :class="['song-cover', songCoverAnimate]" @click="openSongDetail">
         <img
-          :src="currentSong && currentSong.al ? currentSong.al.picUrl : ''"
+          :src="currentSong && currentSong.picUrl ? currentSong.picUrl : ''"
         />
       </div>
       <div class="song-msg">
@@ -42,7 +42,9 @@
           :tooltipVisible="false"
           @change="progressChange"
         />
-        <span class="time">{{ durationTrans(songEndTime) }}</span>
+        <span class="time">{{
+          durationTrans(currentSong && currentSong.time ? currentSong.time : 0)
+        }}</span>
       </div>
     </div>
     <div class="song-set">
@@ -88,16 +90,17 @@ export default {
   computed: {
     ...mapState([
       "volume",
-      "currentSong",
       "electronStore",
       "playStatus",
       "currentPlaylistIndex"
     ]),
-    playlist() {
-      console.log(this.electronStore.playlist, "computed:playList");
-      return this.electronStore.playlist;
+    currentSong() {
+      return this.$store.state.currentSong;
     },
-
+    playList() {
+      console.log(this.electronStore.playList, "computed:playList");
+      return this.electronStore.playList;
+    },
     volumeIcon() {
       return this.volume === 0
         ? "icon-guanbishengyin"
@@ -107,25 +110,12 @@ export default {
     }
   },
   watch: {
-    "playlist.id": {
-      handler(val) {
-        console.log(val, "watch,切换播放事件?");
-        // 切换播放事件？
-        this.setCurrentPlaylistIndex(0);
-        console.log(this.playlist, "playlist:watch,切换播放事件");
-        this.setCurrentSong({
-          value: this.playlist.tracks[this.currentPlaylistIndex],
-          isEmpty: true
-        });
-      },
-      deep: false
-    },
-    currentSong: {
-      handlercurrentSong(val) {
-        console.log(val, "watch,当前播放");
-        if (val.id) this.getSongUrl(val.id);
-      },
-      deep: false
+    "currentSong.id": {
+      immediate: false,
+      handler: function(newval) {
+        console.log(newval, "watch,当前播放id");
+        if (newval) this.getSongUrl(newval);
+      }
     }
   },
   created() {
@@ -165,11 +155,15 @@ export default {
       }, 200);
     },
     getSongUrl(id) {
+      // 在此可能需要判断是否为本地路径
       getSongUrl(id)
         .then(res => {
           const { code, data } = res;
           if (code === 200 && data[0].code === 200) {
-            this.setCurrentSong({ value: data[0], isEmpty: false });
+            this.setCurrentSong({
+              value: { url: data[0].url, isLocal: false },
+              isEmpty: false
+            });
           } else {
             Message.error(
               [404, 403].includes(data.code)

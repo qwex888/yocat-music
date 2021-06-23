@@ -16,13 +16,13 @@ function changeColor(newColor) {
     newColors: getAntdSerials(newColor), // new colors array, one-to-one corresponde with `matchColors`
     changeUrl(cssUrl) {
       return `/${cssUrl}`; // while router is not `hash` mode, it needs absolute path
-    },
+    }
   };
   return client.changer.changeColor(options, Promise);
 }
 
 // 换算播放量
-export const setPlaybackAmount = (count) => {
+export const setPlaybackAmount = count => {
   const num = String(count);
   if (num.length > 8) {
     return num.slice(0, -8) + " 亿";
@@ -35,16 +35,12 @@ export const setPlaybackAmount = (count) => {
   }
 };
 
-// 换算播放时间
-export const durationTrans = (a) => {
+// 换算播放时间-单位秒
+export const durationTrans = time => {
+  time = time / 1000;
   var b = "";
-  var h = parseInt(a / 3600),
-    m = parseInt((a % 3600) / 60),
-    s = parseInt((a % 3600) % 60);
-  if (h > 0) {
-    h = h < 10 ? "0" + h : h;
-    b += h + ":";
-  }
+  var m = parseInt((time % 3600) / 60),
+    s = parseInt((time % 3600) % 60);
   m = m < 10 ? "0" + m : m;
   s = s < 10 ? "0" + s : s;
   b += m + ":" + s;
@@ -54,10 +50,10 @@ export const durationTrans = (a) => {
 export default {
   updateTheme(newPrimaryColor) {
     const hideMessage = () => console.log("正在切换主题！", 0);
-    changeColor(newPrimaryColor).finally((t) => {
+    changeColor(newPrimaryColor).finally(t => {
       setTimeout(() => {
         hideMessage();
       });
     });
-  },
+  }
 };

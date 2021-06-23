@@ -1,12 +1,7 @@
 <template>
   <!-- :src="src" -->
-  <img
-    v-if="!isErr"
-    v-lazy="src"
-    :alt="alt"
-    @error="error"
-    @click="$emit('click')"
-  />
+  <!-- @error="error" -->
+  <img v-if="!isErr" v-lazy="src" :alt="alt" @click="$emit('click')" />
   <div v-else class="placeholder"><a-icon type="picture" /></div>
 </template>
 <script>

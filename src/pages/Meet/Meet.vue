@@ -11,7 +11,7 @@
               <y-image
                 class="image"
                 :src="ite.picUrl"
-                @click="getDetail(ite)"
+                @click="getOrdelDetail(ite.id)"
               ></y-image>
               <span class="play-count"
                 ><i class="iconfont icon-bofang"></i>
@@ -19,7 +19,7 @@
               >
               <div class="play"><a-icon type="play-circle" /></div>
             </div>
-            <span class="song-title" @click="getDetail(ite)">{{
+            <span class="song-title" @click="getOrdelDetail(ite.id)">{{
               ite.name
             }}</span>
           </div>
@@ -63,8 +63,8 @@ export default {
   mounted() {},
   methods: {
     ...mapActions("user", ["login"]),
-    ...mapMutations(["setElectronStore", "setCurrentSong"]),
-    setPlaybackAmount,
+    ...mapActions(["getOrdelDetail"]),
+    setPlaybackAmount, // 转换播放量
     async getData() {
       this.pageLoading = true;
       await this.getPersonalized();
@@ -93,25 +93,6 @@ export default {
     },
     goMore(item) {
       console.log(item);
-    },
-    getDetail(item) {
-      playlistDetail(item.id)
-        .then(res => {
-          const { code, playlist } = res;
-          if (code === 200) {
-            this.$ipc.send("electron-store-set", {
-              key: "playlist",
-              value: playlist
-            });
-            this.setElectronStore({ playlist });
-            // 取出里面歌曲的id和赋值当前音乐信息到组件，并记录当前播放下标
-            this.setCurrentSong({
-              value: playlist.tracks[this.currentPlaylistIndex],
-              isEmpty: true
-            });
-          }
-        })
-        .catch(err => {});
     }
   }
 };

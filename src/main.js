@@ -15,8 +15,8 @@ import VueLazyload from "vue-lazyload";
 // 配置项
 Vue.use(VueLazyload, {
   preLoad: 1.3,
-  error: "",
-  loading: "",
+  error: "/assets/images/error_image.png",
+  loading: "/assets/images/loading.gif",
   attempt: 1
 });
 Vue.prototype.$ipc = window.electron.ipcRenderer;

@@ -1,8 +1,9 @@
-export const returnSinger = ({ ar }) => {
-  if (ar === undefined || !ar || typeof ar === "string") return "";
-  let singer = "";
-  ar.forEach((i, s) => {
-    singer += i.name + (ar.length - 1 === s ? "" : " / ");
+// 格式化歌手数组
+export const returnSinger = ({ singer }) => {
+  if (singer === undefined || !singer || typeof singer === "string") return "";
+  let singers = "";
+  singer.forEach((i, s) => {
+    singers += i.name + (singer.length - 1 === s ? "" : " / ");
   });
-  return singer;
+  return singers;
 };
